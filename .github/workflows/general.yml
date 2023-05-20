@@ -27,8 +27,11 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.toml') }}
-      - name: Install toolchain - stable
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install toolchain - nightly
+        uses: actions-rs/toolchain@v1
+        with:
+              toolchain: nightly
+              profile: minimal
       - name: Install linker - mold
         run: sudo apt-get update; sudo apt-get install mold
       - name: Install Bevy dependencies
@@ -42,10 +45,12 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install toolchain - nightly
+        uses: actions-rs/toolchain@v1
         with:
-          components: rustfmt
+          toolchain: nightly
+          default: true
+          components: rustfmt      
       - name: Run cargo fmt
         run: cargo fmt --all -- --check
 
@@ -65,10 +70,12 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-clippy-${{ hashFiles('**/Cargo.toml') }}
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install toolchain - nightly
+        uses: actions-rs/toolchain@v1
         with:
-          components: clippy
+          toolchain: nightly
+          default: true
+          components: clippy      
       - name: Install linker - mold
         run: sudo apt-get update; sudo apt-get install mold
       - name: Install Dependencies
