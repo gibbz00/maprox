@@ -81,4 +81,5 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Install tarpaulin
         run: cargo install cargo-tarpaulin
+      - name: Run tarpaulin
         run: cargo tarpaulin --verbose --workspace
