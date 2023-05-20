@@ -29,6 +29,8 @@ jobs:
           key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.toml') }}
       - name: Install toolchain - stable
         uses: dtolnay/rust-toolchain@stable
+      - name: Install linker - mold
+        run: sudo apt-get update; sudo apt-get install mold
       - name: Install Bevy dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
       - name: Run cargo test
@@ -67,6 +69,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
+      - name: Install linker - mold
+        run: sudo apt-get update; sudo apt-get install mold
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Run clippy
