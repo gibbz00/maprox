@@ -5,6 +5,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+flatgeobuf = { version = "3.25.0", default-features = false }
 # XXX: do not include dynamic linking in release:
 bevy = { version = "0.10.1", features = ["dynamic_linking"] }
 
