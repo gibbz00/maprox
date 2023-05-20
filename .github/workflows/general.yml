@@ -87,9 +87,23 @@ jobs:
     name: Code coverage
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+      - name: Install toolchain - nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          components: clippy      
+      - name: Install Dependencies
+        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Install tarpaulin
         run: cargo install cargo-tarpaulin
       - name: Run tarpaulin
