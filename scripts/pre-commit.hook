@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Stop and return non-zero exit message upon first error.
+set -e
+
+# Make sure the toolchain is up to date and includes the 
+# neccessary components specified in rust-toolchain.toml:
+rustup update
+
+# Make sure it is properly formatted
+cargo fmt -- --check
+
+# Make sure it follows linting recommendations
+cargo clippy -- -D warnings
+
+# Make sure tests are passed:
+cargo test
