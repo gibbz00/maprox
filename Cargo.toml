@@ -8,6 +8,7 @@ edition = "2021"
 flatgeobuf = { version = "3.25.0", default-features = false }
 # XXX: do not include dynamic linking in release:
 bevy = { version = "0.10.1", features = ["dynamic_linking", "wayland"] }
+bevy_panorbit_camera = "0.4.3"
 
 [profile.dev]
 opt-level = 1
