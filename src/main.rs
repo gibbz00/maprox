@@ -1,6 +1,6 @@
+use bevy::prelude::*;
 use flatgeobuf::{FallibleStreamingIterator, FgbReader};
 use std::{fs::File, io::BufReader};
-// use bevy::prelude::*;
 
 fn main() {
     let mut file_buffer = BufReader::new(File::open("countries.fgb").unwrap());
@@ -12,5 +12,5 @@ fn main() {
         println!("{:#?}", simple_feature.fbs_feature())
     }
 
-    // App::new().add_plugins(DefaultPlugins).run();
+    App::new().add_plugins(DefaultPlugins).run();
 }
