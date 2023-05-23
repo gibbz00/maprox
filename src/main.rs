@@ -56,5 +56,11 @@ fn setup(
         ..default()
     });
 
-    commands.spawn((Camera3dBundle::default(), PanOrbitCamera::default()));
+    commands.spawn((
+        Camera3dBundle::default(),
+        PanOrbitCamera {
+            beta_lower_limit: Some(0.0),
+            ..Default::default()
+        },
+    ));
 }
