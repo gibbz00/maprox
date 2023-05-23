@@ -8,6 +8,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(PanOrbitCameraPlugin)
         .add_startup_system(setup)
+        .add_system(clamp_zoom)
         .run();
 }
 
@@ -63,4 +64,10 @@ fn setup(
             ..Default::default()
         },
     ));
+}
+
+fn clamp_zoom(mut orbit_cameras: Query<&mut PanOrbitCamera>) {
+    for mut orbit_camera in orbit_cameras.iter_mut() {
+        orbit_camera.radius = f32::min(orbit_camera.radius, 20.0)
+    }
 }
