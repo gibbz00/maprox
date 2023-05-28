@@ -112,6 +112,6 @@ jobs:
       - name: Run tarpaulin
         run: cargo +nightly tarpaulin --verbose --ignore-tests --out Xml
       - name: Upload coverage report to codecov.io
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error:     true
