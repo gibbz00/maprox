@@ -8,12 +8,12 @@ edition = "2021"
 flatgeobuf = { version = "3.25.0", default-features = false }
 geozero = "0.9.9"
 geo = "0.25.0"
-# Until: XX gets merged.
-geo-bevy = { git = "https://github.com/gibbz00/geo-bevy", branch = "hide_ctx" }
-fastrand = "1.9.0"
 # XXX: do not include dynamic linking in release:
 bevy = { version = "0.10.1", features = ["dynamic_linking", "wayland"] }
 bevy_panorbit_camera = "0.4.3"
+# TEMP: Until it gets merged.
+geo-bevy = { git = "https://github.com/gibbz00/geo-bevy", branch = "hide_ctx" }
+fastrand = "1.9.0"
 
 [profile.dev]
 opt-level = 1
