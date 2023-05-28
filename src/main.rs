@@ -60,14 +60,14 @@ fn read_flat_geobuf_example(
 }
 
 fn camera(mut commands: Commands) {
-    static ORBIT_FACTOR: f32 = 0.95;
+    const ORBIT_CLAMP: f32 = (PI / 2.) * 0.95;
     commands.spawn((
         Camera3dBundle::default(),
         PanOrbitCamera {
-            alpha_lower_limit: Some((-PI / 2.) * ORBIT_FACTOR),
-            alpha_upper_limit: Some((PI / 2.) * ORBIT_FACTOR),
-            beta_lower_limit: Some((-PI / 2.) * ORBIT_FACTOR),
-            beta_upper_limit: Some((PI / 2.) * ORBIT_FACTOR),
+            alpha_lower_limit: Some(-ORBIT_CLAMP),
+            alpha_upper_limit: Some(ORBIT_CLAMP),
+            beta_lower_limit: Some(-ORBIT_CLAMP),
+            beta_upper_limit: Some(ORBIT_CLAMP),
             ..Default::default()
         },
     ));
