@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
 use flatgeobuf::{FallibleStreamingIterator, FgbReader};
-use geo_bevy::{build_bevy_meshes, BuildBevyMeshesContext, PreparedMesh};
+use geo_bevy::{build_bevy_meshes, PreparedMesh};
 use geozero::ToGeo;
 use std::{f32::consts::PI, fs::File, io::BufReader};
 
@@ -27,12 +27,10 @@ fn read_flat_geobuf_example(
         .unwrap();
 
     while let Some(simple_feature) = flatgeobuf_reader.next().unwrap() {
-        let bevy_mesh_builder_context = BuildBevyMeshesContext::new();
         if let Ok(geometry) = simple_feature.to_geo() {
             let prepared_meshes = build_bevy_meshes(
                 &geometry,
                 Color::rgb(fastrand::f32(), fastrand::f32(), fastrand::f32()),
-                bevy_mesh_builder_context,
             )
             .unwrap();
 
