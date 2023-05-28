@@ -7,11 +7,12 @@ use std::{f32::consts::PI, fs::File, io::BufReader};
 
 fn main() {
     App::new()
+        .insert_resource(ClearColor(Color::WHITE))
         .add_plugins(DefaultPlugins)
         .add_plugin(PanOrbitCameraPlugin)
-        .add_startup_system(read_flat_geobuf_example)
         .add_startup_system(camera)
         .add_system(clamp_zoom)
+        .add_startup_system(read_flat_geobuf_example)
         .run();
 }
 
@@ -37,14 +38,14 @@ fn read_flat_geobuf_example(
             for prepared_mesh in prepared_meshes {
                 match prepared_mesh {
                     PreparedMesh::LineString { mesh, color } => {
-                        commands.spawn(PbrBundle {
+                        commands.spawn(MaterialMeshBundle {
                             mesh: meshes.add(mesh),
                             material: materials.add(color.into()),
                             ..default()
                         });
                     }
                     PreparedMesh::Polygon { mesh, color } => {
-                        commands.spawn(PbrBundle {
+                        commands.spawn(MaterialMeshBundle {
                             mesh: meshes.add(mesh),
                             material: materials.add(color.into()),
                             ..default()
