@@ -35,7 +35,7 @@ jobs:
       - name: Install linker - mold
         run: sudo apt-get update; sudo apt-get install mold
       - name: Install Bevy dependencies
-        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libwayland-dev
+        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libwayland-dev libxkbcommon-dev
       - name: Run cargo test
         run: cargo test
 
@@ -79,7 +79,7 @@ jobs:
       - name: Install linker - mold
         run: sudo apt-get update; sudo apt-get install mold
       - name: Install Dependencies
-        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev libwayland-dev
+        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
       - name: Run clippy
         run: cargo clippy -- -D warnings
 
@@ -106,7 +106,7 @@ jobs:
           default: true
           components: clippy      
       - name: Install Dependencies
-        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev libwayland-dev
+        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
       - name: Install tarpaulin
         run: cargo install cargo-tarpaulin
       - name: Run tarpaulin
