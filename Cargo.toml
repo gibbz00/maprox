@@ -1,18 +1,11 @@
-[package]
-name = "maprox"
-authors = ["Gabriel Hansson"]
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = [
+  "maprox-application",
+  "maprox-client",
+  "maprox-common"
+]
 
-[dependencies]
-flatgeobuf = { version = "3.25.0", default-features = false }
-geozero = "0.9.9"
-# XXX: do not include dynamic linking in release:
-bevy = { version = "0.10.1", features = ["dynamic_linking", "wayland"] }
-bevy_panorbit_camera = "0.5"
-# TEMP: Until it gets merged.
-geo-bevy = { git = "https://github.com/gibbz00/geo-bevy", branch = "master" }
-fastrand = "1.9.0"
+resolver = "2"
 
 [profile.dev]
 opt-level = 1

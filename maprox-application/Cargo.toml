@@ -1,0 +1,21 @@
+[package]
+name = "maprox-application"
+authors = ["Gabriel Hansson"]
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+maprox-common = { path = "../maprox-common" }
+flatgeobuf = { version = "3.25.0", default-features = false }
+geozero = "0.9.9"
+bevy_panorbit_camera = "0.5"
+geo-bevy = {git = "https://github.com/frewsxcv/geo-bevy/"}
+fastrand = "1.9.0"
+matchbox_socket = "0.6.0"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# XXX: do not include dynamic linking in release:
+bevy = { version = "0.10", features = ["dynamic_linking",  "wayland"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+bevy = { version = "0.10" }
