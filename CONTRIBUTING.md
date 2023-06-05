@@ -15,9 +15,14 @@ Do so by copying over a pre-commit script into .git/hooks:
 cp scripts/pre-commit.hook .git/hooks/pre-commit
 ```
 
-## Building
+## Usage
 
-### Linux target uses the mold linker:
+### Native 
+
+Make sure that the appropriate graphics driver APIs are installed, i.e. Vulkan, DirectX12 or Metal depending on the platform.
+Might be possible to use OpenGL by prepending `WGPU_BACKENDS=gl` to the respective build/run commands.
+
+The Linux target uses the mold linker, make sure it is installed.
 
 ```sh
 # Ubuntu
@@ -26,7 +31,31 @@ sudo apt-get install mold
 sudo pacman -S mold
 ```
 
-### For the Web
+Building `maprox` can then simply be done with:
+
+```sh
+ cargo build -p maprox-application
+```
+
+Replace `build` with to run it directly.
+
+### Web
+
+Omit `WGPU_BACKENDS=gl` from the respective commands if `WebGPU` is to be used.
+
+#### Building
+
+```sh
+  WGPU_BACKENDS=gl cargo build --target wasm32-unknown-unknown -p maprox-application
+```
+
+#### Running locally with `wasm-server-runner`
+
+```sh
+  WGPU_BACKENDS=gl cargo run --target wasm32-unknown-unknown -p maprox-application
+```
+
+#### Bundling
 
 Requires trunk:
 
@@ -38,10 +67,7 @@ Then:
 
 ```sh
   cd maprox-application
-  WGPU_BACKENDS=gl cargo build --target wasm32-unknown-unknown
   trunk build
 ```
 
 Output is placed in `maprox-application/dist`.
-Omit `WGPU_BACKENDS=gl` if `WebGPU` is to be used.
-
