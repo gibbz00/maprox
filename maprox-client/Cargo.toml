@@ -4,10 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+
 matchbox_socket = "0.6.1"
 futures-timer = { version = "3", features = ["wasm-bindgen"] }
 log = { version = "0.4", default-features = false }
 maprox-common = { path = "../maprox-common" }
+
+flatgeobuf = { version = "3.25.0", default-features = false }
+geozero = "0.9.9"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.7"

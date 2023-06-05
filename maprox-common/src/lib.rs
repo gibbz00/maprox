@@ -1,3 +1,4 @@
+use geo_types::Geometry;
 use log::info;
 use matchbox_socket::{PeerId, PeerState, SingleChannel, WebRtcSocket};
 use serde::{Deserialize, Serialize};
@@ -8,6 +9,7 @@ pub const MAPROX_CONNECTION_URL: &str = "ws://127.0.0.1:3536/maprox";
 #[derive(Serialize, Deserialize, Clone)]
 pub enum Event {
     Increment,
+    RenderGeometry(Geometry),
 }
 
 pub struct MaproxConnection {
@@ -22,6 +24,7 @@ impl MaproxConnection {
             peers: HashSet::with_capacity(1),
         }
     }
+
     pub fn send_event(&mut self, event: Event) {
         let mut payload = Vec::new();
         ciborium::ser::into_writer(&event, &mut payload).unwrap();

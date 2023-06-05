@@ -1,7 +1,9 @@
-use bevy::{prelude::*, tasks::IoTaskPool};
+use bevy::{ecs::prelude::Resource, prelude::*, tasks::IoTaskPool};
 use maprox_common::{Event as MaproxEvent, MaproxConnection, MAPROX_CONNECTION_URL};
 use matchbox_socket::WebRtcSocket;
 use std::ops::{Deref, DerefMut};
+
+use crate::render_geometry;
 
 pub struct ConnectionPlugin;
 
@@ -44,14 +46,23 @@ fn emit_events(mut connection: ResMut<Connection>) {
     connection.send_event(MaproxEvent::Increment);
 }
 
-fn receive_events(mut connection: ResMut<Connection>) {
+fn receive_events(
+    mut connection: ResMut<Connection>,
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+) {
     if connection.connected_peers_count() == 0 {
         return;
     }
 
-    for event in connection.receive_event().iter() {
+    for event in connection.receive_event().into_iter() {
         match event {
             MaproxEvent::Increment => info!("Incrementing!"),
+            MaproxEvent::RenderGeometry(geometry) => {
+                info!("recieved geometry");
+                render_geometry(geometry, &mut commands, &mut meshes, &mut materials)
+            }
         }
     }
 }
