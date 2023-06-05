@@ -45,11 +45,25 @@ Omit `WGPU_BACKENDS=gl` from the respective commands if `WebGPU` is to be used.
 
 #### Building
 
+Add the `wasm` target:
+
+```sh
+  rustup target add wasm32-unknown-unknown
+```
+
+Then:
+
 ```sh
   WGPU_BACKENDS=gl cargo build --target wasm32-unknown-unknown -p maprox-application
 ```
 
 #### Running locally with `wasm-server-runner`
+
+```sh
+  cargo install wasm-server-runner
+```
+
+Then:
 
 ```sh
   WGPU_BACKENDS=gl cargo run --target wasm32-unknown-unknown -p maprox-application
