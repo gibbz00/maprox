@@ -8,7 +8,7 @@ edition = "2021"
 matchbox_socket = "0.6.1"
 futures-timer = { version = "3", features = ["wasm-bindgen"] }
 log = { version = "0.4", default-features = false }
-maprox-common = { path = "../maprox-common" }
+maprox-common = { path = "../../maprox-common" }
 
 flatgeobuf = { version = "3.25.0", default-features = false }
 geozero = "0.9.9"
