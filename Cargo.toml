@@ -1,12 +1,9 @@
 [workspace]
 members = [
   "maprox-application",
-  "maprox-common"
-]
-exclude = [
+  "maprox-common",
   "examples/maprox-client"
 ]
-
 
 resolver = "2"
 

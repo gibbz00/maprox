@@ -6,8 +6,18 @@ use log::info;
 use maprox_common::{Event, MaproxConnection, MAPROX_CONNECTION_URL};
 use matchbox_socket::WebRtcSocket;
 use std::{fs::File, io::BufReader, time::Duration};
+use tracing_subscriber::{fmt::layer, prelude::*, EnvFilter};
 
-async fn async_main() {
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::registry()
+        .with(
+            EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "maprox_client=info,maprox_common=info".into()),
+        )
+        .with(layer())
+        .init();
+
     let (socket, loop_fut) = WebRtcSocket::new_reliable(MAPROX_CONNECTION_URL);
     let loop_fut = loop_fut.fuse();
     futures::pin_mut!(loop_fut);
@@ -21,26 +31,27 @@ async fn async_main() {
         maprox_connection.register_peers();
 
         select! {
-            // Restart this loop every 100ms
             _ = (&mut timeout).fuse() => {
                 timeout.reset(Duration::from_millis(100));
             }
 
-            // Or break if the message loop ends (disconnected, closed, etc.)
+            // Break if the message loop ends (disconnected, closed, etc.)
             _ = &mut loop_fut => {
                 break;
             }
         }
 
         if maprox_connection.connected_peers_count() == 0 {
-            info!("waiting for maprox connection");
+            info!("Waiting for a maprox connection.");
             continue;
         }
 
-        info!("reading countries.fgb");
+        info!("Established a maprox connection!");
+
+        info!("Reading 'countries.fgb'");
         let mut reader = BufReader::new(File::open("countries.fgb").unwrap());
         let mut flatgeobuf_reader = FgbReader::open(&mut reader).unwrap().select_all().unwrap();
-        info!("sending geometries");
+        info!("Sending geometries.");
         while let Some(simple_feature) = flatgeobuf_reader.next().unwrap() {
             if let Ok(geometry) = simple_feature.to_geo() {
                 maprox_connection.send_event(Event::RenderGeometry(geometry));
@@ -48,49 +59,16 @@ async fn async_main() {
         }
         info!("sent geometries");
 
-        // TODO: make send_event async
-        // break;
-
+        // WORKAROUND: matchbox_api isn't async
         select! {
-            // Restart this loop every 100ms
             _ = (&mut timeout).fuse() => {
-                timeout.reset(Duration::from_secs(30));
+                timeout.reset(Duration::from_secs(3000));
             }
 
-            // Or break if the message loop ends (disconnected, closed, etc.)
+            // Break if the message loop ends (disconnected, closed, etc.)
             _ = &mut loop_fut => {
                 break;
             }
         }
-
-        // for event in maprox_connection.receive_event() {
-        //     match event {
-        //         Event::Increment => info!("Incremented!"),
-        //         _ => (),
-        //     }
-        // }
     }
-}
-
-#[cfg(target_arch = "wasm32")]
-fn main() {
-    console_error_panic_hook::set_once();
-    console_log::init_with_level(log::Level::Debug).unwrap();
-
-    wasm_bindgen_futures::spawn_local(async_main());
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-#[tokio::main]
-async fn main() {
-    use tracing_subscriber::prelude::*;
-    tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "maprox_client=info,maprox_common=info".into()),
-        )
-        .with(tracing_subscriber::fmt::layer())
-        .init();
-
-    async_main().await
 }

@@ -4,22 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+tokio = "1.28.2"
+futures = "0.3"
+futures-timer = "3" 
+log = { version = "0.4", default-features = false }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 matchbox_socket = "0.6.1"
-futures-timer = { version = "3", features = ["wasm-bindgen"] }
-log = { version = "0.4", default-features = false }
 maprox-common = { path = "../../maprox-common" }
-
 flatgeobuf = { version = "3.25.0", default-features = false }
 geozero = "0.9.9"
 
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-console_error_panic_hook = "0.1.7"
-console_log = "1.0"
-futures = { version = "0.3", default-features = false }
-wasm-bindgen-futures = "0.4.36"
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-futures = "0.3"
-tokio = "1.28.2"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
