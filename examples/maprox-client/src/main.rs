@@ -15,7 +15,7 @@ async fn main() {
         .with(layer())
         .init();
 
-    let mut maprox_connection = MaproxConnection::new_internal_message_loop(MAPROX_CONNECTION_URL);
+    let mut maprox_connection = MaproxConnection::new(MAPROX_CONNECTION_URL);
     let mut sent_geometries = false;
 
     loop {

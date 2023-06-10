@@ -18,14 +18,7 @@ pub struct MaproxConnection {
 }
 
 impl MaproxConnection {
-    pub fn new(socket: WebRtcSocket<SingleChannel>) -> Self {
-        Self {
-            socket,
-            peers: HashSet::with_capacity(1),
-        }
-    }
-
-    pub fn new_internal_message_loop(url_str: &str) -> Self {
+    pub fn new(url_str: &str) -> Self {
         let (socket, loop_fut) = WebRtcSocket::new_reliable(url_str);
 
         std::thread::spawn(move || {
@@ -35,7 +28,10 @@ impl MaproxConnection {
                 .expect("Failed to init maprox_connection");
         });
 
-        MaproxConnection::new(socket)
+        Self {
+            socket,
+            peers: HashSet::with_capacity(1),
+        }
     }
 
     pub fn send_event(&mut self, event: Event) {

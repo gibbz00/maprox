@@ -1,6 +1,5 @@
-use bevy::{ecs::prelude::Resource, prelude::*, tasks::IoTaskPool};
+use bevy::{ecs::prelude::Resource, prelude::*};
 use maprox_common::{Event as MaproxEvent, MaproxConnection, MAPROX_CONNECTION_URL};
-use matchbox_socket::WebRtcSocket;
 use std::ops::{Deref, DerefMut};
 
 use crate::render_geometry;
@@ -9,13 +8,8 @@ pub struct ConnectionPlugin;
 
 impl Plugin for ConnectionPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        let (socket, message_loop_fut) = WebRtcSocket::new_reliable(MAPROX_CONNECTION_URL);
-        IoTaskPool::get().spawn(message_loop_fut).detach();
-
-        app.insert_resource(Connection(MaproxConnection::new(socket)));
-
+        app.insert_resource(Connection(MaproxConnection::new(MAPROX_CONNECTION_URL)));
         app.add_system(register_peers);
-        app.add_system(emit_events);
         app.add_system(receive_events);
     }
 }
@@ -41,10 +35,6 @@ fn register_peers(mut connection: ResMut<Connection>) {
     connection
         .register_peers()
         .expect("Connection to signaling server.");
-}
-
-fn emit_events(mut connection: ResMut<Connection>) {
-    connection.send_event(MaproxEvent::Increment);
 }
 
 fn receive_events(
