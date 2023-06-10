@@ -3,7 +3,6 @@ members = [
   "maprox-application",
   "maprox-common",
   "examples/maprox-client",
-  "examples/maprox-leptos"
 ]
 
 resolver = "2"

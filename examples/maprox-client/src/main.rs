@@ -1,6 +1,5 @@
 use flatgeobuf::{FallibleStreamingIterator, FgbReader};
 use geozero::ToGeo;
-use gloo_net::http::Request;
 use log::info;
 use maprox_common::{Event, MaproxConnection, MAPROX_CONNECTION_URL};
 use std::{fs::File, io::BufReader, time::Duration};
@@ -41,11 +40,11 @@ async fn async_main() {
             continue;
         }
 
-        if sent_geometries == false {
+        if !sent_geometries {
             info!("Reading 'countries.fgb'");
             #[cfg(target_arch = "wasm32")]
             {
-                let resp = Request::get("https://flatgeobuf.org/test/data/countries.fgb")
+                let resp = gloo_net::Request::get("https://flatgeobuf.org/test/data/countries.fgb")
                     .send()
                     .await
                     .unwrap();
