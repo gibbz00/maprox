@@ -4,10 +4,20 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-tokio = "1.28.2"
 log = { version = "0.4", default-features = false }
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 maprox-common = { path = "../../maprox-common" }
 flatgeobuf = { version = "3.25.0", default-features = false }
 geozero = "0.9.9"
+
+futures-timer = "3.0.2"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+gloo-net = { version = "0.2" ,default-features = false, features = ["http"] }
+console_error_panic_hook = "0.1.7"
+console_log = "1.0"
+wasm-bindgen-futures = "0.4.29"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = "1.28"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
