@@ -5,12 +5,12 @@ edition = "2021"
 
 [dependencies]
 tokio = "1.28.2"
-futures = "0.3"
-futures-timer = "3" 
 log = { version = "0.4", default-features = false }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
-bevy_tasks = "0.10"
+async-executor = "1.5.1"
+futures-lite = "1.13.0"
+
 matchbox_socket = "0.6.1"
 maprox-common = { path = "../../maprox-common" }
 flatgeobuf = { version = "3.25.0", default-features = false }
