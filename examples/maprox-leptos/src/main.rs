@@ -1,41 +1,16 @@
-#[cfg(feature = "ssr")]
-#[tokio::main]
-async fn main() {
-    use axum::{extract::Extension, routing::post, Router};
-    use leptos::*;
-    use leptos_axum::{generate_route_list, LeptosRoutes};
-    use std::sync::Arc;
-    use maprox_leptos::app::*;
-    use maprox_leptos::fileserv::file_and_error_handler;
+use leptos::{component, view, IntoView, Scope};
 
-    simple_logger::init_with_level(log::Level::Debug).expect("couldn't initialize logging");
-
-    // Setting get_configuration(None) means we'll be using cargo-leptos's env values
-    // For deployment these variables are:
-    // <https://github.com/leptos-rs/start-axum#executing-a-server-on-a-remote-machine-without-the-toolchain>
-    // Alternately a file can be specified such as Some("Cargo.toml")
-    // The file would need to be included with the executable when moved to deployment
-    let conf = get_configuration(None).await.unwrap();
-    let leptos_options = conf.leptos_options;
-    let addr = leptos_options.site_addr;
-    let routes = generate_route_list(|cx| view! { cx, <App/> }).await;
-
-    let app = Router::new()
-        .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
-        .leptos_routes(leptos_options.clone(), routes, |cx| view! { cx, <App/> })
-        .fallback(file_and_error_handler)
-        .layer(Extension(Arc::new(leptos_options)));
-
-    log!("listening on http://{}", &addr);
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+fn main() {
+    leptos::mount_to_body(|cx| {
+        view! { cx,
+            <App/>
+        }
+    });
 }
 
-#[cfg(not(feature = "ssr"))]
-pub fn main() {
-    // no client-side main function
-    // unless we want this to work with e.g., Trunk for a purely client-side app
-    // see lib.rs for hydration function instead
+#[component]
+fn App(cx: Scope) -> impl IntoView {
+    view! { cx,
+        <iframe width=900 height=600 src="http://localhost:1334" />
+    }
 }
