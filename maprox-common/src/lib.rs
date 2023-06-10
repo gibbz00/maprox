@@ -25,6 +25,19 @@ impl MaproxConnection {
         }
     }
 
+    pub fn new_internal_message_loop(url_str: &str) -> Self {
+        let (socket, loop_fut) = WebRtcSocket::new_reliable(url_str);
+
+        std::thread::spawn(move || {
+            let executor = async_executor::Executor::new();
+            let task = executor.spawn(loop_fut);
+            futures_lite::future::block_on(executor.run(task))
+                .expect("Failed to init maprox_connection");
+        });
+
+        MaproxConnection::new(socket)
+    }
+
     pub fn send_event(&mut self, event: Event) {
         let mut payload = Vec::new();
         ciborium::ser::into_writer(&event, &mut payload).unwrap();
@@ -46,8 +59,8 @@ impl MaproxConnection {
         self.peers.len()
     }
 
-    pub fn register_peers(&mut self) {
-        for (peer_id, new_state) in self.socket.update_peers() {
+    pub fn register_peers(&mut self) -> Result<(), &'static str> {
+        for (peer_id, new_state) in self.socket.try_update_peers()? {
             match new_state {
                 PeerState::Connected => {
                     info!("Connected with peer: {:?}", peer_id);
@@ -59,5 +72,7 @@ impl MaproxConnection {
                 }
             }
         }
+
+        Ok(())
     }
 }

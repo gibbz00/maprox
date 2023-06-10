@@ -38,7 +38,9 @@ impl DerefMut for Connection {
 }
 
 fn register_peers(mut connection: ResMut<Connection>) {
-    connection.register_peers();
+    connection
+        .register_peers()
+        .expect("Connection to signaling server.");
 }
 
 fn emit_events(mut connection: ResMut<Connection>) {

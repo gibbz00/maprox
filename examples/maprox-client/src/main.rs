@@ -2,7 +2,6 @@ use flatgeobuf::{FallibleStreamingIterator, FgbReader};
 use geozero::ToGeo;
 use log::info;
 use maprox_common::{Event, MaproxConnection, MAPROX_CONNECTION_URL};
-use matchbox_socket::WebRtcSocket;
 use std::{fs::File, io::BufReader, time::Duration};
 use tracing_subscriber::{fmt::layer, prelude::*, EnvFilter};
 
@@ -16,22 +15,15 @@ async fn main() {
         .with(layer())
         .init();
 
-    let (socket, loop_fut) = WebRtcSocket::new_reliable(MAPROX_CONNECTION_URL);
-
-    std::thread::spawn(move || {
-        let executor = async_executor::Executor::new();
-        let task = executor.spawn(loop_fut);
-        let _ = futures_lite::future::block_on(executor.run(task));
-    });
-
-    let mut maprox_connection = MaproxConnection::new(socket);
+    let mut maprox_connection = MaproxConnection::new_internal_message_loop(MAPROX_CONNECTION_URL);
     let mut sent_geometries = false;
 
     loop {
-        maprox_connection.register_peers();
+        maprox_connection.register_peers().unwrap();
 
         if maprox_connection.connected_peers_count() == 0 {
             info!("Waiting for a maprox connection.");
+            std::thread::sleep(Duration::from_secs(1));
             continue;
         }
 
