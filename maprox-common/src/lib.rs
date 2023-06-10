@@ -21,12 +21,18 @@ impl MaproxConnection {
     pub fn new(url_str: &str) -> Self {
         let (socket, loop_fut) = WebRtcSocket::new_reliable(url_str);
 
-        std::thread::spawn(move || {
+        #[cfg(target_arch = "wasm32")]
+        wasm_bindgen_futures::spawn_local(async { loop_fut.await.unwrap() });
+
+        #[cfg(not(target_arch = "wasm32"))]
+        {
             let executor = async_executor::Executor::new();
             let task = executor.spawn(loop_fut);
-            futures_lite::future::block_on(executor.run(task))
-                .expect("Failed to init maprox_connection");
-        });
+            std::thread::spawn(move || {
+                futures_lite::future::block_on(executor.run(task))
+                    .expect("Failed to init maprox_connection");
+            });
+        }
 
         Self {
             socket,

@@ -12,3 +12,4 @@ matchbox_socket = { git = "https://github.com/gibbz00/matchbox", branch = "try_u
 ciborium = "0.2"
 async-executor = "1.5.1"
 futures-lite = "1.13.0"
+wasm-bindgen-futures = "0.4"

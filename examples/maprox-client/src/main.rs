@@ -27,8 +27,6 @@ async fn main() {
             continue;
         }
 
-        info!("Established a maprox connection!");
-
         if sent_geometries == false {
             info!("Reading 'countries.fgb'");
             let mut reader = BufReader::new(File::open("countries.fgb").unwrap());
