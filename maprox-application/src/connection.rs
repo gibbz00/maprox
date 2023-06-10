@@ -10,8 +10,7 @@ pub struct ConnectionPlugin;
 impl Plugin for ConnectionPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         let (socket, message_loop_fut) = WebRtcSocket::new_reliable(MAPROX_CONNECTION_URL);
-        let task_pool = IoTaskPool::get();
-        task_pool.spawn(message_loop_fut).detach();
+        IoTaskPool::get().spawn(message_loop_fut).detach();
 
         app.insert_resource(Connection(MaproxConnection::new(socket)));
 

@@ -1,3 +1,4 @@
+use bevy_tasks::{IoTaskPool, TaskPoolBuilder};
 use flatgeobuf::{FallibleStreamingIterator, FgbReader};
 use futures::{select, FutureExt};
 use futures_timer::Delay;
@@ -19,13 +20,12 @@ async fn main() {
         .init();
 
     let (socket, loop_fut) = WebRtcSocket::new_reliable(MAPROX_CONNECTION_URL);
-    let loop_fut = loop_fut.fuse();
-    futures::pin_mut!(loop_fut);
+    let mut maprox_connection = MaproxConnection::new(socket);
+    IoTaskPool::init(|| TaskPoolBuilder::default().build());
+    IoTaskPool::get().spawn(loop_fut).detach();
 
     let timeout = Delay::new(Duration::from_millis(100));
     futures::pin_mut!(timeout);
-
-    let mut maprox_connection = MaproxConnection::new(socket);
 
     loop {
         maprox_connection.register_peers();
@@ -33,11 +33,6 @@ async fn main() {
         select! {
             _ = (&mut timeout).fuse() => {
                 timeout.reset(Duration::from_millis(100));
-            }
-
-            // Break if the message loop ends (disconnected, closed, etc.)
-            _ = &mut loop_fut => {
-                break;
             }
         }
 
@@ -57,18 +52,10 @@ async fn main() {
                 maprox_connection.send_event(Event::RenderGeometry(geometry));
             }
         }
+
+        // WORKAROUND: maprox_connection is now async and can therefore not be awaited.
+        std::thread::sleep(Duration::from_secs(1));
         info!("sent geometries");
-
-        // WORKAROUND: matchbox_api isn't async
-        select! {
-            _ = (&mut timeout).fuse() => {
-                timeout.reset(Duration::from_secs(3000));
-            }
-
-            // Break if the message loop ends (disconnected, closed, etc.)
-            _ = &mut loop_fut => {
-                break;
-            }
-        }
+        break;
     }
 }
