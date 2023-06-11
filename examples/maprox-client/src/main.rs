@@ -2,7 +2,11 @@ use flatgeobuf::{FallibleStreamingIterator, FgbReader};
 use geozero::ToGeo;
 use log::info;
 use maprox_common::{Event, MaproxConnection, MAPROX_CONNECTION_URL};
-use std::{fs::File, io::BufReader, time::Duration};
+use std::{
+    fs::{self},
+    io::BufReader,
+    time::Duration,
+};
 
 #[cfg(target_arch = "wasm32")]
 fn main() {
@@ -42,18 +46,22 @@ async fn async_main() {
 
         if !sent_geometries {
             info!("Reading 'countries.fgb'");
+            let bytes: Vec<u8>;
             #[cfg(target_arch = "wasm32")]
             {
-                let resp = gloo_net::Request::get("https://flatgeobuf.org/test/data/countries.fgb")
-                    .send()
-                    .await
-                    .unwrap();
-                let bytes = resp.binary().await.unwrap();
-                let mut reader = BufReader::new(bytes.as_slice());
+                let resp =
+                    gloo_net::http::Request::get("https://flatgeobuf.org/test/data/countries.fgb")
+                        .send()
+                        .await
+                        .unwrap();
+                bytes = resp.binary().await.unwrap();
             }
             #[cfg(not(target_arch = "wasm32"))]
-            let mut reader = BufReader::new(File::open("countries.fgb").unwrap());
+            {
+                bytes = fs::read("countries.fgb").unwrap();
+            }
 
+            let mut reader = BufReader::new(bytes.as_slice());
             let mut flatgeobuf_reader = FgbReader::open(&mut reader)
                 .unwrap()
                 .select_all_seq()
