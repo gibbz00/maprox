@@ -1,5 +1,5 @@
 use bevy::{ecs::prelude::Resource, prelude::*};
-use maprox_common::{Event as MaproxEvent, MaproxConnection, MAPROX_CONNECTION_URL};
+use maprox_common::{Event as MaproxEvent, MaproxHandle, MAPROX_CONNECTION_URL};
 use std::ops::{Deref, DerefMut};
 
 use crate::{refresh_colors, render_geometry};
@@ -8,17 +8,17 @@ pub struct ConnectionPlugin;
 
 impl Plugin for ConnectionPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.insert_resource(Connection(MaproxConnection::new(MAPROX_CONNECTION_URL)));
+        app.insert_resource(Connection(MaproxHandle::new(MAPROX_CONNECTION_URL)));
         app.add_system(register_peers);
         app.add_system(receive_events);
     }
 }
 
 #[derive(Resource)]
-struct Connection(MaproxConnection);
+struct Connection(MaproxHandle);
 
 impl Deref for Connection {
-    type Target = MaproxConnection;
+    type Target = MaproxHandle;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -31,14 +31,14 @@ impl DerefMut for Connection {
     }
 }
 
-fn register_peers(mut connection: ResMut<Connection>) {
+fn register_peers(connection: ResMut<Connection>) {
     connection
         .register_peers()
         .expect("Connection to signaling server.");
 }
 
 fn receive_events(
-    mut connection: ResMut<Connection>,
+    connection: ResMut<Connection>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,

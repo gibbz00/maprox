@@ -1,12 +1,8 @@
 use flatgeobuf::{FallibleStreamingIterator, FgbReader};
 use geozero::ToGeo;
 use log::info;
-use maprox_common::{Event, MaproxConnection, MAPROX_CONNECTION_URL};
-use std::{
-    io::BufReader,
-    sync::{Arc, Mutex},
-    time::Duration,
-};
+use maprox_common::{Event, MaproxHandle, MAPROX_CONNECTION_URL};
+use std::{io::BufReader, time::Duration};
 use wasm_bindgen::UnwrapThrowExt;
 
 fn main() {
@@ -16,30 +12,24 @@ fn main() {
 }
 
 async fn async_main() {
-    let maprox_connection = Arc::new(Mutex::new(MaproxConnection::new(MAPROX_CONNECTION_URL)));
+    let maprox_handle = MaproxHandle::new(MAPROX_CONNECTION_URL);
     let mut sent_geometries = false;
 
-    let maprox_connection0 = maprox_connection.clone();
+    let maprox_handle_clone = maprox_handle.clone();
     let _listener = gloo_events::EventListener::new(
         &gloo_utils::document()
             .get_element_by_id("bt")
             .unwrap_throw(),
         "click",
-        move |_event| {
-            maprox_connection0
-                .lock()
-                .unwrap()
-                .send_event(Event::RefreshColors)
-        },
+        move |_event| maprox_handle_clone.send_event(Event::RefreshColors),
     );
 
     loop {
-        {
-            maprox_connection.lock().unwrap().register_peers().unwrap();
-        }
+        maprox_handle.register_peers().unwrap();
+
         futures_timer::Delay::new(Duration::from_millis(500)).await;
 
-        if maprox_connection.lock().unwrap().connected_peers_count() == 0 {
+        if maprox_handle.connected_peers_count() == 0 {
             info!("Waiting for a maprox connection.");
             continue;
         }
@@ -63,19 +53,13 @@ async fn async_main() {
             info!("Sending geometries.");
             while let Some(simple_feature) = flatgeobuf_reader.next().unwrap() {
                 if let Ok(geometry) = simple_feature.to_geo() {
-                    maprox_connection
-                        .lock()
-                        .unwrap()
-                        .send_event(Event::RenderGeometry(geometry));
+                    maprox_handle.send_event(Event::RenderGeometry(geometry));
                 }
             }
             info!("sent geometries");
             sent_geometries = true;
         }
 
-        maprox_connection
-            .lock()
-            .unwrap()
-            .send_event(Event::Increment);
+        maprox_handle.send_event(Event::Increment);
     }
 }
