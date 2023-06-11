@@ -4,8 +4,40 @@
 </head>
 
 <body>
-  <iframe src="http://localhost:8080" width="800" height="400"></iframe>
-  <button id="bt">Click me!</button>
+  <div>
+    <iframe src="http://localhost:8080"></iframe>
+    <button id="bt">Click me!</button>
+  </div>
 </body>
+
+<style>
+  html {
+    height: 100%;
+    width: 100%;
+  }
+
+  body {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  div {
+    box-sizing: border-box;
+    height: 100%;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+  }
+
+  iframe {
+    flex-grow: 1;
+  }
+
+  button {
+    width: max-content;
+  }
+</style>
 
 </html>
