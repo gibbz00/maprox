@@ -1,8 +1,6 @@
 use bevy::{ecs::prelude::Resource, prelude::*};
-use maprox_api::{Event as MaproxEvent, MaproxHandle, MAPROX_CONNECTION_URL};
+use maprox_api::{MaproxHandle, MAPROX_CONNECTION_URL};
 use std::ops::{Deref, DerefMut};
-
-use crate::{refresh_colors, render_geometry};
 
 pub struct ConnectionPlugin;
 
@@ -44,18 +42,20 @@ fn receive_events(
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut query: Query<&mut Handle<StandardMaterial>>,
 ) {
+    use crate::api::events::*;
+    use maprox_api::Event as MaproxApiEvent;
+
     if connection.connected_peers_count() == 0 {
         return;
     }
 
     for event in connection.receive_event().into_iter() {
         match event {
-            MaproxEvent::Increment => info!("Incrementing!"),
-            MaproxEvent::RenderGeometry(geometry) => {
-                info!("recieved geometry");
+            MaproxApiEvent::Increment => info!("Incrementing!"),
+            MaproxApiEvent::RenderGeometry(geometry) => {
                 render_geometry(geometry, &mut commands, &mut meshes, &mut materials)
             }
-            MaproxEvent::RefreshColors => refresh_colors(&mut query, &mut materials),
+            MaproxApiEvent::RefreshColors => refresh_colors(&mut query, &mut materials),
         }
     }
 }

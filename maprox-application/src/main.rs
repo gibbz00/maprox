@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use maprox_application::{connection::ConnectionPlugin, map_camera::MapCameraPlugin};
+use maprox_application::{api::connection::ConnectionPlugin, map_camera::MapCameraPlugin};
 
 fn main() {
     let mut app = App::new();
