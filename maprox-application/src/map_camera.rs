@@ -6,6 +6,7 @@ pub struct MapCameraPlugin;
 
 impl Plugin for MapCameraPlugin {
     fn build(&self, app: &mut App) {
+        app.insert_resource(ClearColor(Color::WHITE));
         app.add_plugin(PanOrbitCameraPlugin);
         app.add_startup_system(camera);
         app.add_system(clamp_zoom);
