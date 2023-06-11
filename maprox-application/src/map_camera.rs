@@ -20,6 +20,8 @@ fn camera(mut commands: Commands) {
             ..default()
         },
         PanOrbitCamera {
+            button_pan: MouseButton::Left,
+            button_orbit: MouseButton::Middle,
             alpha_lower_limit: Some(-ORBIT_CLAMP),
             alpha_upper_limit: Some(ORBIT_CLAMP),
             beta_lower_limit: Some(-ORBIT_CLAMP),
