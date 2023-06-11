@@ -1,4 +1,5 @@
 pub mod connection;
+pub mod map_camera;
 
 use bevy::prelude::*;
 use geo_bevy::{build_bevy_meshes, PreparedMesh};
