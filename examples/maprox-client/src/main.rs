@@ -2,11 +2,7 @@ use flatgeobuf::{FallibleStreamingIterator, FgbReader};
 use geozero::ToGeo;
 use log::info;
 use maprox_common::{Event, MaproxConnection, MAPROX_CONNECTION_URL};
-use std::{
-    fs::{self},
-    io::BufReader,
-    time::Duration,
-};
+use std::{fs, io::BufReader, time::Duration};
 
 #[cfg(target_arch = "wasm32")]
 fn main() {
