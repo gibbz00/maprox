@@ -10,6 +10,7 @@ pub const MAPROX_CONNECTION_URL: &str = "ws://127.0.0.1:3536/maprox";
 pub enum Event {
     Increment,
     RenderGeometry(Geometry),
+    RefreshColors,
 }
 
 pub struct MaproxConnection {

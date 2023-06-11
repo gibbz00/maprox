@@ -4,6 +4,16 @@ use bevy::prelude::*;
 use geo_bevy::{build_bevy_meshes, PreparedMesh};
 use geo_types::Geometry;
 
+fn refresh_colors(
+    query: &mut Query<&mut Handle<StandardMaterial>>,
+    materials: &mut ResMut<Assets<StandardMaterial>>,
+) {
+    let color = Color::rgb(fastrand::f32(), fastrand::f32(), fastrand::f32());
+    for mut material in query.iter_mut() {
+        *material = materials.add(color.into());
+    }
+}
+
 fn render_geometry(
     geometry: Geometry,
     commands: &mut Commands,

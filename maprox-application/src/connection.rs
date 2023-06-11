@@ -2,7 +2,7 @@ use bevy::{ecs::prelude::Resource, prelude::*};
 use maprox_common::{Event as MaproxEvent, MaproxConnection, MAPROX_CONNECTION_URL};
 use std::ops::{Deref, DerefMut};
 
-use crate::render_geometry;
+use crate::{refresh_colors, render_geometry};
 
 pub struct ConnectionPlugin;
 
@@ -42,6 +42,7 @@ fn receive_events(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    mut query: Query<&mut Handle<StandardMaterial>>,
 ) {
     if connection.connected_peers_count() == 0 {
         return;
@@ -54,6 +55,7 @@ fn receive_events(
                 info!("recieved geometry");
                 render_geometry(geometry, &mut commands, &mut meshes, &mut materials)
             }
+            MaproxEvent::RefreshColors => refresh_colors(&mut query, &mut materials),
         }
     }
 }
