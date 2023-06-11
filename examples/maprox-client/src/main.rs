@@ -3,34 +3,16 @@ use geozero::ToGeo;
 use log::info;
 use maprox_common::{Event, MaproxConnection, MAPROX_CONNECTION_URL};
 use std::{
-    fs,
     io::BufReader,
     sync::{Arc, Mutex},
     time::Duration,
 };
 use wasm_bindgen::UnwrapThrowExt;
 
-#[cfg(target_arch = "wasm32")]
 fn main() {
     console_error_panic_hook::set_once();
     console_log::init_with_level(log::Level::Debug).unwrap();
-
     wasm_bindgen_futures::spawn_local(async_main());
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-#[tokio::main]
-async fn main() {
-    use tracing_subscriber::prelude::*;
-    tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "simple_example=info,matchbox_socket=info".into()),
-        )
-        .with(tracing_subscriber::fmt::layer())
-        .init();
-
-    async_main().await
 }
 
 async fn async_main() {
@@ -65,19 +47,13 @@ async fn async_main() {
         if !sent_geometries {
             info!("Reading 'countries.fgb'");
             let bytes: Vec<u8>;
-            #[cfg(target_arch = "wasm32")]
-            {
-                let resp =
-                    gloo_net::http::Request::get("https://flatgeobuf.org/test/data/countries.fgb")
-                        .send()
-                        .await
-                        .unwrap();
-                bytes = resp.binary().await.unwrap();
-            }
-            #[cfg(not(target_arch = "wasm32"))]
-            {
-                bytes = fs::read("countries.fgb").unwrap();
-            }
+
+            let resp =
+                gloo_net::http::Request::get("https://flatgeobuf.org/test/data/countries.fgb")
+                    .send()
+                    .await
+                    .unwrap();
+            bytes = resp.binary().await.unwrap();
 
             let mut reader = BufReader::new(bytes.as_slice());
             let mut flatgeobuf_reader = FgbReader::open(&mut reader)
