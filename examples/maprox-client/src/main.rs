@@ -1,7 +1,10 @@
 use flatgeobuf::{FallibleStreamingIterator, FgbReader};
 use geozero::ToGeo;
 use log::info;
-use maprox_api::{Event, MaproxHandle, MAPROX_CONNECTION_URL};
+use maprox_api::{
+    events::Event,
+    handle::{MaproxHandle, MAPROX_CONNECTION_URL},
+};
 use std::{io::BufReader, time::Duration};
 use wasm_bindgen::UnwrapThrowExt;
 

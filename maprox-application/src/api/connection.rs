@@ -1,5 +1,5 @@
 use bevy::{ecs::prelude::Resource, prelude::*};
-use maprox_api::{MaproxHandle, MAPROX_CONNECTION_URL};
+use maprox_api::handle::{MaproxHandle, MAPROX_CONNECTION_URL};
 use std::ops::{Deref, DerefMut};
 
 pub struct ConnectionPlugin;
@@ -43,7 +43,7 @@ fn receive_events(
     mut query: Query<&mut Handle<StandardMaterial>>,
 ) {
     use crate::api::events::*;
-    use maprox_api::Event as MaproxApiEvent;
+    use maprox_api::events::Event as MaproxApiEvent;
 
     if connection.connected_peers_count() == 0 {
         return;
