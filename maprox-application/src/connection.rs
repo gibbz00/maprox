@@ -1,5 +1,5 @@
 use bevy::{ecs::prelude::Resource, prelude::*};
-use maprox_common::{Event as MaproxEvent, MaproxHandle, MAPROX_CONNECTION_URL};
+use maprox_api::{Event as MaproxEvent, MaproxHandle, MAPROX_CONNECTION_URL};
 use std::ops::{Deref, DerefMut};
 
 use crate::{refresh_colors, render_geometry};

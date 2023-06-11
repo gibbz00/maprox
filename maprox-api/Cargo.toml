@@ -1,5 +1,5 @@
 [package]
-name = "maprox-common"
+name = "maprox-api"
 version = "0.1.0"
 edition = "2021"
 

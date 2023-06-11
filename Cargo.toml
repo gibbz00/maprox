@@ -1,7 +1,7 @@
 [workspace]
 members = [
   "maprox-application",
-  "maprox-common",
+  "maprox-api",
   "examples/maprox-client",
 ]
 
