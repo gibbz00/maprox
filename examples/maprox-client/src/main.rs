@@ -39,15 +39,15 @@ async fn async_main() {
 
         if !sent_geometries {
             info!("Reading 'countries.fgb'");
-            let bytes: Vec<u8>;
 
-            let resp =
+            let bytes =
                 gloo_net::http::Request::get("https://flatgeobuf.org/test/data/countries.fgb")
                     .send()
                     .await
+                    .unwrap()
+                    .binary()
+                    .await
                     .unwrap();
-            bytes = resp.binary().await.unwrap();
-
             let mut reader = BufReader::new(bytes.as_slice());
             let mut flatgeobuf_reader = FgbReader::open(&mut reader)
                 .unwrap()
