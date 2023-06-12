@@ -15,7 +15,7 @@ fn main() {
 }
 
 async fn async_main() {
-    let maprox_handle = MaproxHandle::new(&MAPROX_CONNECTION_URL);
+    let maprox_handle = MaproxHandle::new(MAPROX_CONNECTION_URL);
     let mut sent_geometries = false;
 
     let maprox_handle_clone = maprox_handle.clone();

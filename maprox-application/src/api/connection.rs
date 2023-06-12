@@ -6,7 +6,7 @@ pub struct ConnectionPlugin;
 
 impl Plugin for ConnectionPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.insert_resource(Connection(MaproxHandle::new(&MAPROX_CONNECTION_URL)));
+        app.insert_resource(Connection(MaproxHandle::new(MAPROX_CONNECTION_URL)));
         app.add_system(register_peers);
         app.add_system(receive_events);
     }
