@@ -10,7 +10,7 @@ bevy_panorbit_camera = "0.5"
 
 flatgeobuf = { version = "3.25.0", default-features = false }
 geozero = "0.9.9"
-geo-bevy = {git = "https://github.com/frewsxcv/geo-bevy/"}
+geo-bevy = {git = "https://github.com/gibbz00/geo-bevy/", branch = "separate_colors" }
 fastrand = "1.9.0"
 geo-types = "0.7.9"
 maprox-api = { path = "../maprox-api" }

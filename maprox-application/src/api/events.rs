@@ -26,21 +26,18 @@ pub fn render_geometry(
     meshes: &mut ResMut<Assets<Mesh>>,
     materials: &mut ResMut<Assets<StandardMaterial>>,
 ) {
-    // TEMP: color's should really be passed through the mesh builder.
-    let prepared_meshes = build_bevy_meshes(&geometry, Color::WHITE).unwrap();
-
-    for prepared_mesh in prepared_meshes {
+    for prepared_mesh in build_bevy_meshes(&geometry).unwrap() {
         match prepared_mesh {
-            PreparedMesh::LineString { mesh, .. } => {
+            PreparedMesh::LineString { mesh } => {
                 commands.spawn(MaterialMeshBundle {
                     mesh: meshes.add(mesh),
                     material: gen_random_color_material(materials),
                     ..default()
                 });
             }
-            PreparedMesh::Polygon { mesh, .. } => {
+            PreparedMesh::Polygon { polygon_mesh, .. } => {
                 commands.spawn(MaterialMeshBundle {
-                    mesh: meshes.add(mesh),
+                    mesh: meshes.add(polygon_mesh),
                     material: gen_random_color_material(materials),
                     ..default()
                 });
