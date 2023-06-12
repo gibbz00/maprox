@@ -1,10 +1,14 @@
 use crate::events::Event;
 use log::info;
 use matchbox_socket::{PeerId, PeerState, SingleChannel, WebRtcSocket};
+use once_cell::sync::Lazy;
 use std::collections::HashSet;
 use std::sync::{Arc, Mutex};
 
-pub const MAPROX_CONNECTION_URL: &str = "ws://127.0.0.1:3536/maprox";
+pub static MAPROX_CONNECTION_URL: Lazy<String> = Lazy::new(|| {
+    std::env::var("MAPROX_CONNECTION_URL")
+        .expect("MAPROX_CONNECTION_URL environment variable must be set.")
+});
 
 /// Handle can be cloned freely as it a wrapper for an
 /// `Arc<Mutex<MaproxConnection>>`

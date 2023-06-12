@@ -9,6 +9,7 @@ log = { version = "0.4", default-features = false }
 geo-types = "0.7.9"
 
 matchbox_socket = { git = "https://github.com/gibbz00/matchbox", branch = "try_update_peers" }
+once_cell = "1.18"
 ciborium = "0.2"
 async-executor = "1.5.1"
 futures-lite = "1.13.0"
