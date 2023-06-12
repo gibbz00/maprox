@@ -9,6 +9,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  MAPROX_CONNECTION_URL: ${{ secrets.MAPROX_CONNECTION_URL }}
 
 jobs:
   test:

@@ -15,6 +15,7 @@ fn main() {
 }
 
 async fn async_main() {
+    info!("{}", MAPROX_CONNECTION_URL);
     let maprox_handle = MaproxHandle::new(MAPROX_CONNECTION_URL);
     let mut sent_geometries = false;
 

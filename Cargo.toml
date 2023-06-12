@@ -12,3 +12,6 @@ opt-level = 1
 
 [profile.dev.package."*"]
 opt-level = 3
+
+[patch.crates-io]
+ws_stream_wasm = { git = "https://github.com/gibbz00/ws_stream_wasm", branch = "expand_error_handling" }
