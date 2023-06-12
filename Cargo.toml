@@ -2,7 +2,7 @@
 members = [
   "maprox-application",
   "maprox-api",
-  "examples/maprox-client",
+  "maprox-demo",
 ]
 
 resolver = "2"

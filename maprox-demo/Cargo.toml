@@ -1,5 +1,5 @@
 [package]
-name = "maprox-client"
+name = "maprox-demo"
 version = "0.1.0"
 edition = "2021"
 
@@ -19,6 +19,6 @@ log = { version = "0.4", default-features = false }
 console_log = "1.0"
 console_error_panic_hook = "0.1.7"
 
-maprox-api = { path = "../../maprox-api" }
+maprox-api = { path = "../maprox-api" }
 flatgeobuf = { version = "3.25.0", default-features = false }
 geozero = "0.9.9"
