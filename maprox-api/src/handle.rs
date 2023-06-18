@@ -30,7 +30,7 @@ impl MaproxHandle {
             let executor = async_executor::Executor::new();
             let task = executor.spawn(loop_fut);
             std::thread::spawn(move || {
-                futures_lite::future::block_on(executor.run(task))
+                futures::executor::block_on(executor.run(task))
                     .expect("Failed to init maprox_connection");
             });
         }
@@ -84,5 +84,40 @@ impl MaproxHandle {
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[futures_test::test]
+    async fn send_and_recieve_events() {
+        let handle_1 = MaproxHandle::new(MAPROX_CONNECTION_URL);
+        let handle_2 = MaproxHandle::new(MAPROX_CONNECTION_URL);
+
+        futures::join!(wait_for_peer(&handle_1), wait_for_peer(&handle_2));
+
+        handle_1.send_event(Event::Increment);
+        futures_timer::Delay::new(std::time::Duration::from_millis(500)).await;
+        assert_eq!(
+            &Event::Increment,
+            handle_2.receive_event().first().expect("Received event")
+        );
+    }
+
+    async fn wait_for_peer(maprox_handle: &MaproxHandle) {
+        loop {
+            maprox_handle.register_peers().unwrap();
+
+            futures_timer::Delay::new(std::time::Duration::from_millis(500)).await;
+
+            if maprox_handle.connected_peers_count() != 0 {
+                info!("Found for a maprox connection.");
+                break;
+            }
+
+            info!("Waiting for a maprox connection.");
+        }
     }
 }
