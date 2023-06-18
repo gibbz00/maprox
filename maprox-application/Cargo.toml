@@ -15,6 +15,9 @@ fastrand = "2.0"
 geo-types = "0.7.9"
 maprox-api = { path = "../maprox-api" }
 
+[target.'cfg(target = "wasm32-unknown-unknown")'.dev-dependencies]
+wasm-bindgen-test = "0.2"
+
 [target.'cfg(target = "x86_64-unknown-linux-gnu")'.dependencies]
 bevy = { version = "0.10", features = ["wayland"] }
 
