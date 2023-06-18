@@ -54,20 +54,12 @@ jobs:
           key: ${{ matrix.target }}
 
       - name: Install toolchain - nightly
-        if: matrix.target != 'wasm32-unknown-unknown'
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           default: true
           profile: minimal
-
-      - name: Install toolchain - nightly | wasm
-        if: matrix.target == 'wasm32-unknown-unknown'
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          default: true
-          target: wasm32-unknown-unknown
+          target: ${{ matrix.target }}
 
       - name: Install linker - mold | Linux
         if: matrix.target == 'x86_64-unknown-linux-gnu'
