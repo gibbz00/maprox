@@ -1,0 +1,11 @@
+{
+  "moz:firefoxOptions": {
+    "prefs": {
+      "dom.webgpu.enabled": true,
+    },
+    "args": []
+  },
+  "goog:chromeOptions": {
+    "args": []
+  }
+}
