@@ -1,0 +1,44 @@
+name: Setup
+description: Checks out sources, leverage caching, and install build dependencies.
+
+inputs:
+  target:
+    required: true
+    description: Build target.
+
+runs:
+  using: composite
+  steps:
+  - name: Checkout sources
+    uses: actions/checkout@v3
+
+  - name: Leverage caching
+    uses: Swatinem/rust-cache@v2
+    with:
+      key: ${{ inpub.target }}
+
+  - name: Install toolchain - nightly
+    uses: actions-rs/toolchain@v1
+    with:
+      toolchain: nightly
+      default: true
+      components: [rustfmt, clippy]
+
+  - name: Install linker - mold | Linux
+    if: input.target == 'x86_64-unknown-linux-gnu'
+    shell: bash
+    run: sudo apt install mold
+
+  - name: Install Bevy build dependencies | Linux
+    if: input.target == 'x86_64-unknown-linux-gnu'
+    shell: bash
+    run: sudo apt install
+      pkg-config
+      libx11-dev
+      libasound2-dev
+      libudev-dev
+      libxcb-render0-dev
+      libxcb-shape0-dev
+      libxcb-xfixes0-dev
+      libwayland-dev
+      libxkbcommon-dev

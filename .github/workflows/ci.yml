@@ -16,15 +16,11 @@ jobs:
     name: Formatting
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-
-      - name: Install toolchain - nightly
-        uses: actions-rs/toolchain@v1
+      - name: Setup
+        uses: ./github/actions/setup
         with:
-          toolchain: nightly
-          default: true
-          components: rustfmt
+          target: x86_64-unknown-linux-gnu
+
       - name: Run cargo fmt
         run: cargo fmt --all -- --check
 
@@ -42,41 +38,11 @@ jobs:
           target: x86_64-apple-darwin
         - os: windows-latest
           target: x86_64-pc-windows-gnu
-    env:
-      TARGET: ${{ matrix.target }}
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-
-      - name: Leverage caching
-        uses: Swatinem/rust-cache@v2
+      - name: Setup
+        uses: ./github/actions/setup
         with:
-          key: ${{ matrix.target }}
-
-      - name: Install toolchain - nightly
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          default: true
-          profile: minimal
           target: ${{ matrix.target }}
-
-      - name: Install linker - mold | Linux
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        run: sudo apt install mold
-
-      - name: Install Bevy build dependencies | Linux
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        run: sudo apt install
-          pkg-config
-          libx11-dev
-          libasound2-dev
-          libudev-dev
-          libxcb-render0-dev
-          libxcb-shape0-dev
-          libxcb-xfixes0-dev
-          libwayland-dev
-          libxkbcommon-dev
 
       - name: Run tests
         run: cargo test --target ${{ matrix.target }}
@@ -85,36 +51,10 @@ jobs:
     name: Lints (Linux)
     runs-on: ubuntu-latest
     steps:
-
-      - name: Checkout sources
-        uses: actions/checkout@v3
-
-      - name: Leverage caching
-        uses: Swatinem/rust-cache@v2
+      - name: Setup
+        uses: ./github/actions/setup
         with:
-          key: ${{ runner.os }}
-
-      - name: Install toolchain - nightly | Clippy
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          default: true
-          components: clippy
-
-      - name: Install linker - mold | Linux
-        run: sudo apt install mold
-
-      - name: Install Bevy build dependencies | Linux
-        run: sudo apt install
-          pkg-config
-          libx11-dev
-          libasound2-dev
-          libudev-dev
-          libxcb-render0-dev
-          libxcb-shape0-dev
-          libxcb-xfixes0-dev
-          libwayland-dev
-          libxkbcommon-dev
+          target: x86_64-unknown-linux-gnu
 
       - name: Run clippy
         run: cargo clippy --all-targets -- -D warnings
@@ -123,32 +63,10 @@ jobs:
     name: Code coverage (Linux)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-
-      - name: Leverage caching
-        uses: Swatinem/rust-cache@v2
+      - name: Setup
+        uses: ./github/actions/setup
         with:
-          key: ${{ runner.os }}
-
-      - name: Install toolchain - nightly
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          default: true
-          profile: minimal
-
-      - name: Install Bevy build dependencies | Linux
-        run: sudo apt install
-          pkg-config
-          libx11-dev
-          libasound2-dev
-          libudev-dev
-          libxcb-render0-dev
-          libxcb-shape0-dev
-          libxcb-xfixes0-dev
-          libwayland-dev
-          libxkbcommon-dev
+          target: x86_64-unknown-linux-gnu
 
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
