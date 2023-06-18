@@ -1,0 +1,173 @@
+name: Staging
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: full
+  MAPROX_CONNECTION_URL: ${{ secrets.MAPROX_CONNECTION_URL }}
+
+jobs:
+  format:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Install toolchain - nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          components: rustfmt
+      - name: Run cargo fmt
+        run: cargo fmt --all -- --check
+
+  build:
+    name: Build for ${{ matrix.target }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+        - os: ubuntu-latest
+          target: x86_64-unknown-linux-gnu
+        - os: macos-latest
+          target: x86_64-apple-darwin
+        - os: windows-latest
+          target: x86_64-pc-windows-gnu
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Leverage caching
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ runner.os }}
+
+      - name: Install toolchain - nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          profile: minimal
+
+      - name: Install linker - mold | Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt install mold
+
+      - name: Install Bevy build dependencies | Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt install
+          pkg-config
+          libx11-dev
+          libasound2-dev
+          libudev-dev
+          libxcb-render0-dev
+          libxcb-shape0-dev
+          libxcb-xfixes0-dev
+          libwayland-dev
+          libxkbcommon-dev
+
+      - name: Build
+        run: cargo build
+
+  test:
+    name: Test on ${{ matrix.os }}
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+        - os: ubuntu-latest
+          target: x86_64-unknown-linux-gnu
+        - os: macos-latest
+          target: x86_64-apple-darwin
+        - os: windows-latest
+          target: x86_64-pc-windows-gnu
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Leverage caching
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ runner.os }}
+
+      - name: Install toolchain - nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          profile: minimal
+
+      - name: Run tests
+        run: cargo test
+
+  clippy_check:
+    name: Lints
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Leverage caching
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ runner.os }}
+
+      - name: Install toolchain - nightly | Clippy
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          components: clippy
+
+      - name: Run clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+  coverage:
+    name: Code coverage (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Leverage caching
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ runner.os }}
+
+      - name: Install toolchain - nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          profile: minimal
+
+      - name: Install Bevy build dependencies | Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt install
+          pkg-config
+          libx11-dev
+          libasound2-dev
+          libudev-dev
+          libxcb-render0-dev
+          libxcb-shape0-dev
+          libxcb-xfixes0-dev
+          libwayland-dev
+          libxkbcommon-dev
+
+      - name: Run cargo-tarpaulin
+        uses: actions-rs/tarpaulin@v0.1
+        with:
+          version: '0.15.0'
+      - name: Upload coverage report to codecov.io
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error:     true

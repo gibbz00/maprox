@@ -15,6 +15,8 @@ fastrand = "2.0"
 geo-types = "0.7.9"
 maprox-api = { path = "../maprox-api" }
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-# XXX: do not include dynamic linking in release:
+[target.'cfg(target = "x86_64-unknown-linux-gnu")'.dependencies]
+bevy = { version = "0.10", features = ["wayland"] }
+
+[target.'cfg(target = "x86_64-unknown-linux-gnu")'.dev-dependencies]
 bevy = { version = "0.10", features = ["dynamic_linking",  "wayland"] }
