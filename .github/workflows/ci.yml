@@ -24,16 +24,14 @@ jobs:
       - name: Run cargo fmt
         run: cargo fmt --all -- --check
 
-  test:
-    name: Test for ${{ matrix.target }} on ${{ matrix.os }}
+  native_tests:
+    name: Native tests for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
         - os: ubuntu-latest
           target: x86_64-unknown-linux-gnu
-        - os: ubuntu-latest
-          target: wasm32-unknown-unknown
         - os: macos-latest
           target: x86_64-apple-darwin
         - os: windows-latest
@@ -46,6 +44,27 @@ jobs:
 
       - name: Run tests
         run: cargo test --target ${{ matrix.target }}
+
+  web_tests:
+    name: Web tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [firefox, chrome]
+    steps:
+      - name: Setup
+        uses: ./github/actions/setup
+        with:
+          target: wasm32-unknown-unknown
+
+      - name: Install wasm-pack and browser
+        uses: jetli/wasm-pack-action@v0.4.0
+
+      - id: Installing ${{ matrix.browser }}
+        uses: browser-actions/setup-${{ matrix.browser }}@v1
+
+      - name: Run tests
+        run: wasm-pack test --headless --${{ matrix.browser }}
 
   clippy_check:
     name: Lints (Linux)
