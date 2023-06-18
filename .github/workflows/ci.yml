@@ -18,6 +18,7 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+
       - name: Install toolchain - nightly
         uses: actions-rs/toolchain@v1
         with:
@@ -35,10 +36,14 @@ jobs:
         include:
         - os: ubuntu-latest
           target: x86_64-unknown-linux-gnu
+        - os: ubuntu-latest
+          target: wasm32-unknown-unknown
         - os: macos-latest
           target: x86_64-apple-darwin
         - os: windows-latest
           target: x86_64-pc-windows-gnu
+    env:
+      TARGET: ${{ matrix.target }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -46,21 +51,30 @@ jobs:
       - name: Leverage caching
         uses: Swatinem/rust-cache@v2
         with:
-          key: ${{ runner.os }}
+          key: ${{ matrix.target }}
 
       - name: Install toolchain - nightly
+        if: matrix.target != 'wasm32-unknown-unknown'
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           default: true
           profile: minimal
 
+      - name: Install toolchain - nightly | wasm
+        if: matrix.target == 'wasm32-unknown-unknown'
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          target: wasm32-unknown-unknown
+
       - name: Install linker - mold | Linux
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.target == 'x86_64-unknown-linux-gnu'
         run: sudo apt install mold
 
       - name: Install Bevy build dependencies | Linux
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.target == 'x86_64-unknown-linux-gnu'
         run: sudo apt install
           pkg-config
           libx11-dev
@@ -73,10 +87,10 @@ jobs:
           libxkbcommon-dev
 
       - name: Run tests
-        run: cargo test
+        run: cargo test --target ${{ matrix.target }}
 
   clippy_check:
-    name: Lints
+    name: Lints (Linux)
     runs-on: ubuntu-latest
     steps:
 
