@@ -27,8 +27,8 @@ jobs:
       - name: Run cargo fmt
         run: cargo fmt --all -- --check
 
-  build:
-    name: Build for ${{ matrix.target }} on ${{ matrix.os }}
+  test:
+    name: Test for ${{ matrix.target }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -72,44 +72,11 @@ jobs:
           libwayland-dev
           libxkbcommon-dev
 
-      - name: Build
-        run: cargo build
-
-  test:
-    name: Test on ${{ matrix.os }}
-    needs: build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-        - os: ubuntu-latest
-          target: x86_64-unknown-linux-gnu
-        - os: macos-latest
-          target: x86_64-apple-darwin
-        - os: windows-latest
-          target: x86_64-pc-windows-gnu
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-
-      - name: Leverage caching
-        uses: Swatinem/rust-cache@v2
-        with:
-          key: ${{ runner.os }}
-
-      - name: Install toolchain - nightly
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          default: true
-          profile: minimal
-
       - name: Run tests
         run: cargo test
 
   clippy_check:
     name: Lints
-    needs: build
     runs-on: ubuntu-latest
     steps:
 
@@ -127,6 +94,21 @@ jobs:
           toolchain: nightly
           default: true
           components: clippy
+
+      - name: Install linker - mold | Linux
+        run: sudo apt install mold
+
+      - name: Install Bevy build dependencies | Linux
+        run: sudo apt install
+          pkg-config
+          libx11-dev
+          libasound2-dev
+          libudev-dev
+          libxcb-render0-dev
+          libxcb-shape0-dev
+          libxcb-xfixes0-dev
+          libwayland-dev
+          libxkbcommon-dev
 
       - name: Run clippy
         run: cargo clippy --all-targets -- -D warnings
@@ -151,7 +133,6 @@ jobs:
           profile: minimal
 
       - name: Install Bevy build dependencies | Linux
-        if: matrix.os == 'ubuntu-latest'
         run: sudo apt install
           pkg-config
           libx11-dev
