@@ -5,9 +5,11 @@ env:
   MAPROX_CONNECTION_URL: ${{ secrets.MAPROX_CONNECTION_URL }}
 
 on:
-  push:
-    branches: ["master"]
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Staging"]
+    branches: [main]
+    types: 
+      - completed
 
 permissions:
   contents: read
