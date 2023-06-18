@@ -1,5 +1,5 @@
 name: Setup
-description: Checks out sources, leverage caching, and install build dependencies.
+description: Leverage caching and install build dependencies.
 
 inputs:
   target:
@@ -9,28 +9,25 @@ inputs:
 runs:
   using: composite
   steps:
-  - name: Checkout sources
-    uses: actions/checkout@v3
-
   - name: Leverage caching
     uses: Swatinem/rust-cache@v2
     with:
-      key: ${{ inpub.target }}
+      key: ${{ inputs.target }}
 
   - name: Install toolchain - nightly
     uses: actions-rs/toolchain@v1
     with:
       toolchain: nightly
       default: true
-      components: [rustfmt, clippy]
+      components: rustfmt, clippy
 
   - name: Install linker - mold | Linux
-    if: input.target == 'x86_64-unknown-linux-gnu'
+    if: inputs.target == 'x86_64-unknown-linux-gnu'
     shell: bash
     run: sudo apt install mold
 
   - name: Install Bevy build dependencies | Linux
-    if: input.target == 'x86_64-unknown-linux-gnu'
+    if: inputs.target == 'x86_64-unknown-linux-gnu'
     shell: bash
     run: sudo apt install
       pkg-config
