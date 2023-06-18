@@ -70,11 +70,11 @@ jobs:
       - name: Install wasm-pack and browser
         uses: jetli/wasm-pack-action@v0.4.0
       # Templating does not seem to work in action names
-      - name: Installing ${{ matrix.browser }}
+      - name: Installing chrome
         if: matrix.browser == 'chrome'
         uses: browser-actions/setup-chrome@v1
 
-      - name: Installing ${{ matrix.browser }}
+      - name: Installing firefox
         if: matrix.browser == 'firefox'
         uses: browser-actions/setup-firefox@v1
 
