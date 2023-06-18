@@ -60,7 +60,7 @@ jobs:
       - name: Install wasm-pack and browser
         uses: jetli/wasm-pack-action@v0.4.0
 
-      - id: Installing ${{ matrix.browser }}
+      - name: Installing ${{ matrix.browser }}
         uses: browser-actions/setup-${{ matrix.browser }}@v1
 
       - name: Run tests
