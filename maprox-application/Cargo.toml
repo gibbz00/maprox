@@ -8,11 +8,11 @@ edition = "2021"
 bevy = { version = "0.10" }
 bevy_panorbit_camera = "0.5"
 
-flatgeobuf = { version = "3.25.0", default-features = false }
-geozero = "0.9.9"
-geo-bevy = {git = "https://github.com/gibbz00/geo-bevy/", branch = "separate_colors" }
+flatgeobuf = { version = "3.25", default-features = false }
+geozero = "0.9"
+geo-bevy = {git = "https://github.com/gibbz00/geo-bevy/", branch = "specific_geometries" }
 fastrand = "2.0"
-geo-types = "0.7.9"
+geo-types = "0.7"
 maprox-api = { path = "../maprox-api" }
 
 [target.'cfg(target = "wasm32-unknown-unknown")'.dev-dependencies]

@@ -5,10 +5,10 @@ edition = "2021"
 
 [dependencies]
 futures = "0.3"
-futures-timer = "3.0.2"
+futures-timer = "3.0"
 
 wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4.29"
+wasm-bindgen-futures = "0.4"
 web-sys = { version = "0.3", features = ["EventTarget", "Document", "Element"] }
 
 gloo-events = "0.1"
@@ -17,8 +17,8 @@ gloo-net = { version = "0.2" ,default-features = false, features = ["http"] }
 
 log = { version = "0.4", default-features = false }
 console_log = "1.0"
-console_error_panic_hook = "0.1.7"
+console_error_panic_hook = "0.1"
 
 maprox-api = { path = "../maprox-api" }
-flatgeobuf = { version = "3.25.0", default-features = false }
-geozero = "0.9.9"
+flatgeobuf = { version = "3.25", default-features = false }
+geozero = "0.9"

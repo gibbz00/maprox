@@ -6,18 +6,18 @@ edition = "2021"
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 log = { version = "0.4", default-features = false }
-geo-types = "0.7.9"
+geo-types = "0.7"
 
 
 matchbox_socket = { git = "https://github.com/gibbz00/matchbox", branch = "try_update_peers" }
 ciborium = "0.2"
-async-executor = "1.5.1"
+async-executor = "1.5"
 futures = "0.3"
 wasm-bindgen-futures = "0.4"
 
 [dev-dependencies]
 futures-test = "0.3"
-futures-timer = "3.0.2"
+futures-timer = "3.0"
 
 
 [target.'cfg(target = "wasm32-unknown-unknown")'.dev-dependencies]
