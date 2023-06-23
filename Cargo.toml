@@ -14,4 +14,7 @@ opt-level = 1
 opt-level = 3
 
 [patch.crates-io]
+# TEMP: https://github.com/najamelan/ws_stream_wasm/pull/11
 ws_stream_wasm = { git = "https://github.com/gibbz00/ws_stream_wasm", branch = "expand_error_handling" }
+# TEMP: https://github.com/georust/geo/pull/1020 is yet to included in a release.
+geo-types = { git = "https://github.com/georust/geo" }

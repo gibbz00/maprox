@@ -68,7 +68,7 @@ impl MaproxHandle {
         self.connection.lock().unwrap().peers.len()
     }
 
-    pub fn register_peers(&self) -> Result<(), &'static str> {
+    pub fn register_peers(&self) -> Result<(), matchbox_socket::ChannelError> {
         let mut connection = self.connection.lock().unwrap();
         for (peer_id, new_state) in connection.socket.try_update_peers()? {
             match new_state {

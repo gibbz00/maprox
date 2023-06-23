@@ -2,6 +2,7 @@ use flatgeobuf::{FallibleStreamingIterator, FgbReader};
 use geozero::ToGeo;
 use log::info;
 use maprox_api::{
+    color::RgbaColor,
     events::Event,
     handle::{MaproxHandle, MAPROX_CONNECTION_URL},
 };
@@ -56,7 +57,10 @@ async fn async_main() {
             info!("Sending geometries.");
             while let Some(simple_feature) = flatgeobuf_reader.next().unwrap() {
                 if let Ok(geometry) = simple_feature.to_geo() {
-                    maprox_handle.send_event(Event::RenderGeometry(geometry));
+                    maprox_handle.send_event(Event::RenderGeometry((
+                        geometry,
+                        RgbaColor(1.0, 0.0, 0.4, 1.0),
+                    )));
                 }
             }
             info!("sent geometries");
