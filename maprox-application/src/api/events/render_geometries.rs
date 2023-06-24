@@ -1,20 +1,35 @@
+use super::{unlit_standard_material_handle, BevySpawnStructs};
 use bevy::prelude::*;
 use geo_bevy::*;
 use geo_types::*;
 use maprox_api::color::RgbaColor;
 
-use crate::api::BevySpawnStructs;
-
-// TEMP: was only used for protyping
-pub fn refresh_colors(
-    query: &mut Query<&mut Handle<StandardMaterial>>,
-    materials: &mut ResMut<Assets<StandardMaterial>>,
+pub fn render_geometry(
+    geometry: Geometry,
+    color: &RgbaColor,
+    bevy_spawn_structs: &mut BevySpawnStructs,
 ) {
-    for mut material in query.iter_mut() {
-        *material = unlit_standard_material_handle(
-            &RgbaColor(fastrand::f32(), fastrand::f32(), fastrand::f32(), 1.),
-            materials,
-        );
+    match geometry {
+        Geometry::Point(point) => render_point(point, color, bevy_spawn_structs),
+        Geometry::MultiPoint(multi_point) => {
+            render_multi_point(multi_point, color, bevy_spawn_structs)
+        }
+        Geometry::Line(line) => render_line(line, color, bevy_spawn_structs),
+        Geometry::LineString(line_string) => {
+            render_line_string(line_string, color, bevy_spawn_structs)
+        }
+        Geometry::MultiLineString(multi_linestring) => {
+            render_multi_linestring(multi_linestring, color, bevy_spawn_structs)
+        }
+        Geometry::Polygon(polygon) => render_polygon(polygon, color, bevy_spawn_structs),
+        Geometry::MultiPolygon(multi_polygon) => {
+            render_multi_polygon(multi_polygon, color, bevy_spawn_structs)
+        }
+        Geometry::Rect(rect) => render_rect(rect, color, bevy_spawn_structs),
+        Geometry::Triangle(triangle) => render_triangle(triangle, color, bevy_spawn_structs),
+        Geometry::GeometryCollection(geometry_collection) => {
+            render_geometry_collection(geometry_collection, color, bevy_spawn_structs)
+        }
     }
 }
 
@@ -41,7 +56,7 @@ pub fn render_multi_point(
 }
 
 pub fn render_line(line: Line, color: &RgbaColor, bevy_spawn_structs: &mut BevySpawnStructs) {
-    if let Ok(Some(line_mesh)) = line_to_mesh(&line) {
+    if let Some(line_mesh) = line_to_mesh(&line) {
         spawn_mesh(line_mesh, color, bevy_spawn_structs)
     }
 }
@@ -51,7 +66,7 @@ pub fn render_line_string(
     color: &RgbaColor,
     bevy_spawn_structs: &mut BevySpawnStructs,
 ) {
-    if let Ok(Some(line_string_mesh)) = line_string_to_mesh(&line_string) {
+    if let Some(line_string_mesh) = line_string_to_mesh(&line_string) {
         spawn_mesh(line_string_mesh, color, bevy_spawn_structs)
     }
 }
@@ -61,10 +76,8 @@ pub fn render_multi_linestring(
     color: &RgbaColor,
     bevy_spawn_structs: &mut BevySpawnStructs,
 ) {
-    if let Ok(line_string_meshes) = multi_line_string_to_mesh(&multi_linestring) {
-        for line_string_mesh in line_string_meshes {
-            spawn_mesh(line_string_mesh, color, bevy_spawn_structs);
-        }
+    for line_string_mesh in multi_line_string_to_mesh(&multi_linestring) {
+        spawn_mesh(line_string_mesh, color, bevy_spawn_structs);
     }
 }
 
@@ -73,7 +86,7 @@ pub fn render_polygon(
     color: &RgbaColor,
     bevy_spawn_structs: &mut BevySpawnStructs,
 ) {
-    if let Ok(Some(polygon_mesh)) = polygon_to_mesh(&polygon) {
+    if let Some(polygon_mesh) = polygon_to_mesh(&polygon) {
         spawn_polygon_mesh(polygon_mesh, color, bevy_spawn_structs)
     }
 }
@@ -83,10 +96,8 @@ pub fn render_multi_polygon(
     color: &RgbaColor,
     bevy_spawn_structs: &mut BevySpawnStructs,
 ) {
-    if let Ok(polygon_meshes) = multi_polygon_to_mesh(&multi_polygon) {
-        for polygon_mesh in polygon_meshes {
-            spawn_polygon_mesh(polygon_mesh, color, bevy_spawn_structs);
-        }
+    for polygon_mesh in multi_polygon_to_mesh(&multi_polygon) {
+        spawn_polygon_mesh(polygon_mesh, color, bevy_spawn_structs);
     }
 }
 
@@ -95,39 +106,18 @@ pub fn render_rect(
     color: &RgbaColor,
     bevy_spawn_structs: &mut BevySpawnStructs,
 ) {
-    if let Ok(Some(polygon_mesh)) = rect_to_mesh(&rect) {
+    if let Some(polygon_mesh) = rect_to_mesh(&rect) {
         spawn_polygon_mesh(polygon_mesh, color, bevy_spawn_structs)
     }
 }
 
-pub fn render_geometry(
-    geometry: Geometry,
+pub fn render_triangle(
+    triangle: Triangle,
     color: &RgbaColor,
     bevy_spawn_structs: &mut BevySpawnStructs,
 ) {
-    let color_material_handle =
-        unlit_standard_material_handle(color, &mut bevy_spawn_structs.materials);
-    // TEMP: unwrap
-    match geometry_to_mesh(&geometry).unwrap().unwrap() {
-        GeometryMesh::LineString(mesh) => {
-            bevy_spawn_structs.commands.spawn(MaterialMeshBundle {
-                mesh: bevy_spawn_structs.meshes.add(mesh),
-                material: color_material_handle,
-                ..default()
-            });
-        }
-        GeometryMesh::Polygon(polygon_mesh) => {
-            bevy_spawn_structs.commands.spawn(MaterialMeshBundle {
-                mesh: bevy_spawn_structs.meshes.add(polygon_mesh.mesh),
-                material: color_material_handle,
-                ..default()
-            });
-        }
-        GeometryMesh::Point(points) => {
-            for point in points {
-                render_point(point, color, bevy_spawn_structs)
-            }
-        }
+    if let Some(polygon_mesh) = triangle_to_mesh(&triangle) {
+        spawn_polygon_mesh(polygon_mesh, color, bevy_spawn_structs)
     }
 }
 
@@ -136,8 +126,31 @@ pub fn render_geometry_collection(
     color: &RgbaColor,
     bevy_spawn_structs: &mut BevySpawnStructs,
 ) {
-    for geometry in geometry_collection {
-        render_geometry(geometry, color, bevy_spawn_structs);
+    let color_material_handle =
+        unlit_standard_material_handle(color, &mut bevy_spawn_structs.materials);
+
+    for geometry_mesh in geometry_collection_to_mesh(&geometry_collection) {
+        match geometry_mesh {
+            GeometryMesh::LineString(mesh) => {
+                bevy_spawn_structs.commands.spawn(MaterialMeshBundle {
+                    mesh: bevy_spawn_structs.meshes.add(mesh),
+                    material: color_material_handle.clone(),
+                    ..default()
+                });
+            }
+            GeometryMesh::Polygon(polygon_mesh) => {
+                bevy_spawn_structs.commands.spawn(MaterialMeshBundle {
+                    mesh: bevy_spawn_structs.meshes.add(polygon_mesh.mesh),
+                    material: color_material_handle.clone(),
+                    ..default()
+                });
+            }
+            GeometryMesh::Point(points) => {
+                for point in points {
+                    render_point(point, color, bevy_spawn_structs)
+                }
+            }
+        }
     }
 }
 
@@ -159,15 +172,4 @@ fn spawn_polygon_mesh(
         material: unlit_standard_material_handle(color, &mut bevy_spawn_structs.materials),
         ..default()
     });
-}
-
-fn unlit_standard_material_handle(
-    color: &RgbaColor,
-    materials: &mut ResMut<Assets<StandardMaterial>>,
-) -> Handle<StandardMaterial> {
-    let RgbaColor(r, g, b, a) = color;
-    materials.add(StandardMaterial {
-        unlit: true,
-        ..Color::rgba(*r, *g, *b, *a).into()
-    })
 }
