@@ -1,8 +1,7 @@
 [workspace]
 members = [
-  "maprox-application",
-  "maprox-api",
-  "maprox-demo",
+  "crates/*",
+  "examples/*"
 ]
 
 resolver = "2"

@@ -19,6 +19,6 @@ log = { version = "0.4", default-features = false }
 console_log = "1.0"
 console_error_panic_hook = "0.1"
 
-maprox-api = { path = "../maprox-api" }
+maprox-api = { path = "../../crates/maprox-api" }
 flatgeobuf = { version = "3.25", default-features = false }
 geozero = "0.9"
