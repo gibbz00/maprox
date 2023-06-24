@@ -21,4 +21,4 @@ futures-timer = "3.0"
 
 
 [target.'cfg(target = "wasm32-unknown-unknown")'.dev-dependencies]
-wasm-bindgen-test = "0.2"
+wasm-bindgen-test = "0.3"
