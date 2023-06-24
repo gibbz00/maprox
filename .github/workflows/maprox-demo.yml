@@ -6,8 +6,8 @@ env:
 
 on:
   workflow_run:
-    workflows: ["Staging"]
-    branches: [main]
+    workflows: [Staging]
+    branches: [master]
     types: 
       - completed
 
@@ -17,7 +17,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: false
 
 jobs:
@@ -46,7 +46,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: 'dist'
+          path: dist
 
       - name: Deploy to GitHub Pages
         id: deployment
