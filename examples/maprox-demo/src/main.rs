@@ -59,7 +59,7 @@ async fn async_main() {
                 if let Ok(geometry) = simple_feature.to_geo() {
                     maprox_handle.send_event(Event::RenderGeometry((
                         geometry,
-                        RgbaColor(1.0, 0.0, 0.4, 1.0),
+                        RgbaColor(0.0, 0.0, 0.5, 1.0),
                     )));
                 }
             }

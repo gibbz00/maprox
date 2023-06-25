@@ -33,7 +33,7 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
-          target: x86_64-unknown-linux-gnu
+          target: was32-unknown-unknown
 
       - name: Setup Trunk
         uses: jetli/trunk-action@v0.4.0
