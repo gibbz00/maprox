@@ -5,7 +5,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = { version = "0.10" }
+bevy = { version = "0.11" }
 bevy_panorbit_camera = "0.5"
 
 flatgeobuf = { version = "3.25", default-features = false }
@@ -19,7 +19,7 @@ maprox-api = { path = "../maprox-api" }
 wasm-bindgen-test = "0.2"
 
 [target.'cfg(target = "x86_64-unknown-linux-gnu")'.dependencies]
-bevy = { version = "0.10", features = ["wayland"] }
+bevy = { version = "0.11", features = ["wayland"] }
 
 [target.'cfg(target = "x86_64-unknown-linux-gnu")'.dev-dependencies]
 bevy = { version = "0.10", features = ["dynamic_linking",  "wayland"] }
