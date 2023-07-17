@@ -6,7 +6,7 @@ edition = "2021"
 
 [dependencies]
 bevy = { version = "0.10" }
-bevy_panorbit_camera = "0.5"
+bevy_panorbit_camera = "0.6"
 
 flatgeobuf = { version = "3.25", default-features = false }
 geozero = "0.9"
