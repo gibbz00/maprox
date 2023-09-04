@@ -21,4 +21,4 @@ console_error_panic_hook = "0.1"
 
 maprox-api = { path = "../../crates/maprox-api" }
 flatgeobuf = { version = "3.25", default-features = false }
-geozero = "0.9"
+geozero = "0.11"
